@@ -2,13 +2,10 @@
     <div class="showjourney container">
         <div class="row mt-2">
             <div class="col-md-3 d-none d-md-block">
-                <p class="lead">xx</p>
                 <div class="list-group">
-                    <li class="list-group-item"> {{journey.location}}</li>
-                    <li class="list-group-item">with who</li>
-                    <li class="list-group-item">time</li>
+                    <li class="list-group-item"> Location: {{journey.location}}</li>
                 </div>
-                <GMap />
+                <GMap class="mt-2" />
             </div>
 
             <div v-if="journey" class="col-md-9">
