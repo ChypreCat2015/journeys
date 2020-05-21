@@ -2,10 +2,8 @@
     <div class="showjourney container">
         <div class="row mt-2">
             <div class="col-md-3 d-none d-md-block">
-                <div class="list-group">
-                    <li class="list-group-item"> Location: {{journey.location}}</li>
-                </div>
-                <GMap class="mt-2" />
+                <Weather :location='journey.location' class="mt-2" @clickWeather="getGeo"/>
+                <GMap :geoPosition='geoPosition' class="mt-2" />
             </div>
 
             <div v-if="journey" class="col-md-9">
@@ -17,6 +15,7 @@
                     <p class="card-text"><small>SUBMITTED BY {{ journey.author || 'anonymous'}}, {{ journey.moment }} </small></p>
                     <router-link v-if="owner" :to="{ name: 'EditJourney', params: journey.slug }" class="btn btn-warning btn-sm">edit</router-link>
                     <a v-if="owner" @click="deleteJourney" class="btn btn-danger btn-sm">delete</a>
+                    <!-- <div class="delete">xx</div> -->
                 </div>
                 <AddComments />
             </div>
@@ -33,19 +32,21 @@ import firebase from 'firebase'
 import moment from 'moment'
 import AddComments from '@/components/comments/AddComments.vue'
 import GMap from '@/components/journeys/GMap.vue'
+import Weather from '@/components/journeys/Weather.vue'
 
 
 export default {
     name: 'ShowJourney',
-    // props: ['journey_slug'],
     components: {
         AddComments,
-        GMap
+        GMap,
+        Weather
     },
     data(){
         return {
             journey: [],
-            owner: false
+            owner: false,
+            geoPosition:null
         }
     },
     methods: {
@@ -56,6 +57,11 @@ export default {
             } else {
                 console.log('this is from showpage: thanks for not delete me')
             }
+        },
+        getGeo(value){
+            console.log(value);
+            this.geoPosition = value;
+
         }
     },
     created(){
@@ -99,4 +105,10 @@ export default {
 .showjourney .card-body {
     padding-left: 0;
 }
+
+/* .showjourney .delete {
+    background-image: url(../../assets/icons/delete.svg) no-repeat 100%;
+    width: 100%;
+
+} */
 </style>

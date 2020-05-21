@@ -1,18 +1,20 @@
 <template>
     <div class="map">
         <div class="google-map" id="map">
-            <h2>map</h2>
+
         </div>
     </div>   
 </template>
 
 <script>
+import { EventBus } from '@/eventBus.js'
+
 export default {
     name: 'GMap',
     data(){
         return {
-            lat: 53,
-            lng:-2
+            lat: null,
+            lng: null
         }
     },
     methods: {
@@ -29,7 +31,15 @@ export default {
         }
     },
     mounted(){
-        this.renderMap()
+       //this.renderMap()
+    },
+    created(){
+        EventBus.$on('geoPosition', (value) => {
+            //get value from weather component 
+            this.lat = value.lat;
+            this.lng = value.lng;
+            this.renderMap();
+        })
     }
 }
 </script>

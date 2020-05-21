@@ -4,23 +4,25 @@
             <div class="container">
                 <h1 class="display-4">Welcome to My Wonderful Journeys!</h1>
                 <p class="lead">View places I've been to</p>
-                <!-- make the button it's own paragragh -->
-                <p>
-                        <router-link :to="{ name: 'AddJourney' }" class="btn btn-lg">Add New Journey</router-link>
-                </p>
+                <div class="search">
+                    <router-link :to="{ name: 'AddJourney' }" class="btn btn-lg">Add New Journey</router-link>
+                    <input type="text" v-model="search" placeholder="Search Journeys Titles" class="form-control">
+                </div>
+
+                
             </div>
         </header>
 
         <div class="container">
             <div class="row">
-                <div v-for="(journey, index) in journeys" :key="index" class="col-md-3 col-sm-6 card-group">
+                <div v-for="(journey, index) in filteredJourneys" :key="index" class="col-lg-3 col-md-6 card-group">
                     <div id="indexcard" class="card mt-3"> 
                         <img :src="journey.image" class="card-img-top">
                         <div class="card-body d-flex flex-column">
                             <span class="card-title">{{ journey.title }}</span>
-                            <small class="card-text text-muted">{{ journey.description.substring(0,80) }}</small>
+                            <small class="card-text text-muted">{{ journey.description | snippet }}</small>
                             <div class="mt-auto">
-                                <router-link :to="{ name: 'ShowJourney', params: {journey_slug:journey.slug} }" class="btn btn-sm">More Info</router-link>
+                                <router-link :to="{ name: 'ShowJourney', params: {journey_slug:journey.slug} }" class="btn btn-sm mt-3">More Info</router-link>
                             </div>
                         </div>
                     </div>
@@ -38,7 +40,8 @@ export default {
     name: 'Journeys',
     data(){
         return {
-            journeys: []
+            journeys: [],
+            search:''
         }
     },
     methods: {
@@ -50,19 +53,21 @@ export default {
             snapshot.forEach(doc => {
                 let journey = doc.data();
                 journey.id = doc.id;
-                // journey.title = doc.data().title;
-                // journey.description = doc.data().description;
-                // journey.image = doc.data().image;
-                // journey.slug = doc.data().slug;
                 this.journeys.push(journey);
             })
         })
-
+    },
+    computed: {
+        filteredJourneys: function(){
+            return this.journeys.filter(journey => {
+                return journey.title.toLowerCase().match(this.search.toLowerCase());
+            });
+        }
     }
 }
 </script>
 
-<style scoped>
+<style>
 .journeys .btn{
     color: rgb(128, 153, 179);
     border: 1px solid rgb(128, 153, 179);
@@ -71,4 +76,16 @@ export default {
     background-color: rgb(128, 153, 179);
     color:white;
 }
+
+.journeys .form-control{
+    display: inline-block;
+    width: 40%;
+    float: right;
+    margin-top: 5px;
+    
+}
+.journeys .btn{
+    display: inline-block;
+}
+
 </style>
