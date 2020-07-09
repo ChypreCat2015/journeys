@@ -2,7 +2,7 @@
 node_modules
 /dist
 /public/index.html
-
+Readme1.md
 # local env files
 .env.local
 .env.*.local
