@@ -6,23 +6,33 @@
                 <p class="lead">View places I've been to</p>
                 <div class="search">
                     <router-link :to="{ name: 'AddJourney' }" class="btn btn-lg">Add New Journey</router-link>
-                    <input type="text" v-model="search" placeholder="Search Journeys Titles" class="form-control">
+                    <input
+                        type="text"
+                        v-model="search"
+                        placeholder="Search Journeys Titles"
+                        class="form-control"
+                    />
                 </div>
-
-                
             </div>
         </header>
 
         <div class="container">
             <div class="row">
-                <div v-for="(journey, index) in filteredJourneys" :key="index" class="col-lg-3 col-md-6 card-group">
-                    <div id="indexcard" class="card mt-3"> 
-                        <img :src="journey.image" class="card-img-top">
+                <div
+                    v-for="(journey, index) in filteredJourneys"
+                    :key="index"
+                    class="col-lg-3 col-md-6 card-group"
+                >
+                    <div id="indexcard" class="card mt-3">
+                        <img :src="journey.image" class="card-img-top" />
                         <div class="card-body d-flex flex-column">
                             <span class="card-title">{{ journey.title }}</span>
                             <small class="card-text text-muted">{{ journey.description | snippet }}</small>
                             <div class="mt-auto">
-                                <router-link :to="{ name: 'ShowJourney', params: {journey_slug:journey.slug} }" class="btn btn-sm mt-3">More Info</router-link>
+                                <router-link
+                                    :to="{ name: 'ShowJourney', params: {journey_slug:journey.slug} }"
+                                    class="btn btn-sm mt-3"
+                                >More Info</router-link>
                             </div>
                         </div>
                     </div>
@@ -30,62 +40,64 @@
             </div>
         </div>
     </div>
-
 </template>
 
 <script>
-import db from '@/firebase/init'
+import { mapActions, mapGetters } from "vuex";
 
 export default {
-    name: 'Journeys',
-    data(){
+    name: "Journeys",
+    data() {
         return {
-            journeys: [],
-            search:''
-        }
+            search: ""
+        };
     },
-    methods: {
-
-    },
-    created(){
-        db.collection('journeys').orderBy('createdAt', 'desc').get()
-        .then(snapshot => {
-            snapshot.forEach(doc => {
-                let journey = doc.data();
-                journey.id = doc.id;
-                this.journeys.push(journey);
-            })
-        })
+    methods: mapActions(["getJourneys", "getComments"]),
+    created() {
+        this.getJourneys();
     },
     computed: {
-        filteredJourneys: function(){
-            return this.journeys.filter(journey => {
-                return journey.title.toLowerCase().match(this.search.toLowerCase());
+        //be carefull with the quote sign!!!
+        ...mapGetters(["journeysList"]),
+        filteredJourneys: function() {
+            return this.journeysList.filter(journey => {
+                return journey.title
+                    .toLowerCase()
+                    .match(this.search.toLowerCase());
             });
         }
     }
-}
+};
 </script>
 
 <style>
-.journeys .btn{
+.journeys .btn {
     color: rgb(128, 153, 179);
     border: 1px solid rgb(128, 153, 179);
 }
 .journeys .btn:hover {
     background-color: rgb(128, 153, 179);
-    color:white;
+    color: white;
 }
 
-.journeys .form-control{
+.journeys .form-control {
     display: inline-block;
     width: 40%;
     float: right;
     margin-top: 5px;
-    
 }
-.journeys .btn{
+.journeys .btn {
     display: inline-block;
 }
 
+.journeys .card:hover {
+    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.journeys .card-title,
+.journeys .card-text,
+.container h1,
+p.lead {
+    user-select: none;
+}
 </style>
