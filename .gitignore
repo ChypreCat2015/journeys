@@ -1,8 +1,7 @@
 .DS_Store
 node_modules
 /dist
-/public/index.html
-Readme1.md
+
 # local env files
 .env.local
 .env.*.local
@@ -20,3 +19,8 @@ yarn-error.log*
 *.njsproj
 *.sln
 *.sw?
+
+#myself ignore
+public/*
+test/*
+Readme1.md
