@@ -12,6 +12,10 @@
                         <label for="location">Location</label>
                         <input type="text" class="form-control" name="location" v-model="location" />
                     </div>
+                    <div class="form-group">
+                        <label for="vistedAt">Visted Time</label>
+                        <input type="date" class="form-control" name="vistedAt" v-model="vistedAt" />
+                    </div>
                     <!-- upload file -->
                     <form class="upload" @submit.prevent="uploadImg">
                         <label>Only .jpg .jpeg .png file, less than 8MB</label>
@@ -42,12 +46,6 @@
                     </div>
                 </form>
             </div>
-            <!-- markdown editor -->
-            <!-- <div id="main">
-                <mavon-editor>
-                    <textarea name="content" id cols="30" rows="10">dafd</textarea>
-                </mavon-editor>
-            </div>-->
         </div>
     </div>
 </template>
@@ -64,12 +62,13 @@ export default {
             user: null,
             title: null,
             location: null,
+            vistedAt: null,
             image: [],
             description: null,
             createdAt: null,
             slug: null,
             feedback: null,
-            imageFeedback: null
+            imageFeedback: null,
         };
     },
     methods: {
@@ -78,30 +77,32 @@ export default {
                 this.title &&
                 this.location &&
                 this.image.url &&
-                this.description
+                this.description &&
+                this.vistedAt
             ) {
                 this.feedback = null;
                 //create slug
                 this.slug = slugify(this.title, {
                     replacement: "-",
                     remove: /[$*_=~.()'"!\-:@]/g,
-                    lower: true
+                    lower: true,
                 });
                 db.collection("journeys")
                     .add({
                         title: this.title,
                         location: this.location,
+                        visitedAt: this.vistedAt,
                         image: this.image.url,
                         description: this.description,
                         createdAt: Date.now(),
                         slug: this.slug,
                         author: this.user.displayName,
-                        author_id: this.user.uid
+                        author_id: this.user.uid,
                     })
                     .then(() => {
                         this.$router.push({ name: "Index" });
                     })
-                    .catch(err => {
+                    .catch((err) => {
                         console.log(err);
                     });
                 console.log("here we go");
@@ -123,8 +124,8 @@ export default {
                 );
                 mountainsRef
                     .put(this.image)
-                    .then(snapshot => {
-                        snapshot.ref.getDownloadURL().then(url => {
+                    .then((snapshot) => {
+                        snapshot.ref.getDownloadURL().then((url) => {
                             this.image.url = url;
                             // const bucketName = 'my-journeys-be363.appspot.com/journeyimg';
                             // const filePath = this.imageName;
@@ -134,23 +135,23 @@ export default {
                             this.imageFeedback = "Image uploaded successfully";
                         });
                     })
-                    .catch(err => console.log(err));
+                    .catch((err) => console.log(err));
             } else {
                 this.imageFeedback =
                     "Only png,jpg,jpeg can be uploaded and less than 8MB";
             }
-        }
+        },
     },
     created() {
         //acquire currentUser's data
-        firebase.auth().onAuthStateChanged(user => {
+        firebase.auth().onAuthStateChanged((user) => {
             if (user) {
                 this.user = user;
             } else {
                 this.user.uid = null;
             }
         });
-    }
+    },
 };
 </script>
 

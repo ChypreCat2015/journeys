@@ -25,14 +25,24 @@
                 >
                     <div id="indexcard" class="card mt-3">
                         <img :src="journey.image" alt="Journey image" class="card-img-top" />
-                        <div class="card-body d-flex flex-column">
+                        <div class="card-body d-flex flex-row flex-wrap">
                             <span class="card-title">{{ journey.title }}</span>
-                            <small class="card-text text-muted">{{ journey.description | snippet }}</small>
-                            <div class="mt-auto">
+                            <small
+                                class="card-text text-muted w-100"
+                            >{{ journey.description | snippet }}</small>
+                            <div class="mt-3 more-info-link">
                                 <router-link
                                     :to="{ name: 'ShowJourney', params: {journey_slug:journey.slug} }"
-                                    class="btn btn-sm mt-3"
+                                    class="btn btn-sm"
                                 >More Info</router-link>
+                            </div>
+                            <div class="likes mt-3 text-right">
+                                <span
+                                    @click="clickedLike()"
+                                    :disabled="hasLiked"
+                                    class="mdi mdi-heart-outline"
+                                ></span>
+                                <small class="ml-2 text-muted">{{ likeCounter }}</small>
                             </div>
                         </div>
                     </div>
@@ -50,9 +60,20 @@ export default {
     data() {
         return {
             search: "",
+            likeCounter: 0,
+            hasLiked: false,
         };
     },
-    methods: mapActions(["getJourneys"]),
+    methods: {
+        ...mapActions(["getJourneys"]),
+        clickedLike() {
+            this.likeCounter++;
+            let likeEl = document.querySelector(".mdi");
+            likeEl.classList.remove("mdi-heart-outline");
+            likeEl.classList.add("mdi-heart");
+            this.hasLiked = true;
+        },
+    },
     created() {
         this.getJourneys();
     },
@@ -71,6 +92,9 @@ export default {
 </script>
 
 <style>
+.journeys h1.display-4 {
+    font-family: "Pangolin", Arial, Helvetica, sans-serif;
+}
 .journeys .btn {
     color: rgb(128, 153, 179);
     border: 1px solid rgb(128, 153, 179);
@@ -81,13 +105,10 @@ export default {
 }
 
 .journeys .form-control {
-    display: inline-block;
+    display: block;
     width: 40%;
     float: right;
     margin-top: 5px;
-}
-.journeys .btn {
-    display: inline-block;
 }
 
 .journeys .card:hover {
@@ -99,6 +120,16 @@ export default {
 .container h1,
 p.lead {
     user-select: none;
+}
+
+#indexcard .mdi-heart-outline {
+    color: gray;
+    cursor: pointer;
+    font-size: 1.2em;
+}
+#indexcard div.more-info-link,
+#indexcard div.likes {
+    width: 49%;
 }
 
 @media screen and (max-width: 768px) {

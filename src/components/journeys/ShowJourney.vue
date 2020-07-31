@@ -1,23 +1,21 @@
 <template>
     <div class="showjourney container">
         <div class="row mt-2">
-            <div class="col-md-3 d-none d-md-block">
-                <!-- <Weather :location="journey.location" class="mt-2" @clickWeather="getGeo" /> -->
+            <div v-if="singleJourney" class="col-md-3 d-md-block">
+                <h5 class="ml-2">Journey - {{singleJourney.title}}</h5>
+                <ul class="list-group">
+                    <li class="list-group-item">
+                        <strong>Location:</strong>
+                        {{ singleJourney.location }}
+                    </li>
+                    <li class="list-group-item">
+                        <strong>Visted:</strong>
+                        {{ singleJourney.visitedAt.toMillis() | customizedFromNow }}
+                    </li>
+                    <li class="list-group-item">Morbi leo risus</li>
+                </ul>
+
                 <GMap class="mt-2" />
-
-                <div class="card">
-                    <img src class="card-img-top" />
-
-                    <div class="card-body">
-                        <h5 class="card-title">{{ singleJourney.author }}</h5>
-                        <p>
-                            <span class="online"></span>online
-                        </p>
-                        <p>
-                            <span class="offline"></span>offline
-                        </p>
-                    </div>
-                </div>
             </div>
 
             <div v-if="singleJourney" class="col-md-9">
@@ -49,7 +47,6 @@ import firebase from "firebase";
 import AddComments from "@/components/comments/AddComments.vue";
 import { mapGetters, mapActions } from "vuex";
 import GMap from "@/components/journeys/GMap.vue";
-// import Weather from "@/components/journeys/Weather.vue";
 
 export default {
     name: "ShowJourney",
@@ -76,7 +73,6 @@ export default {
     },
     created() {
         this.getSingleJourney(this.slug);
-
         firebase.auth().onAuthStateChanged((user) => {
             if (user) {
                 if (user.uid == this.singleJourney.author_id) {

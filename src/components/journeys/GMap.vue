@@ -34,6 +34,7 @@ export default {
                     new window.google.maps.Marker({
                         map: resultsMap,
                         position: results[0].geometry.location,
+                        streetViewControl: false,
                     });
                 } else {
                     console.log(
@@ -44,19 +45,13 @@ export default {
             });
         },
     },
-    mounted() {
-        // this.geocoderAddress(this.renderMap(), this.singleJourney.location);
-        // console.log("Finished geoMap component");
-    },
     computed: {
         singleJourney() {
             return this.$store.state.singleJourney;
         },
     },
     watch: {
-        singleJourney(newVal, oldVal) {
-            console.log(newVal);
-            console.log(oldVal);
+        singleJourney(newVal) {
             this.geocoderAddress(this.renderMap(), newVal.location);
         },
     },
