@@ -2,13 +2,14 @@
     <div class="showjourney container">
         <div class="row mt-2">
             <div class="col-md-3 d-none d-md-block">
-                <!-- <Weather :location="journey.location" class="mt-2" @clickWeather="getGeo" />
-                <GMap :geoPosition="geoPosition" class="mt-2" />-->
+                <!-- <Weather :location="journey.location" class="mt-2" @clickWeather="getGeo" /> -->
+                <GMap class="mt-2" />
+
                 <div class="card">
                     <img src class="card-img-top" />
 
                     <div class="card-body">
-                        <h5 class="card-title">{{ journey.author }}</h5>
+                        <h5 class="card-title">{{ singleJourney.author }}</h5>
                         <p>
                             <span class="online"></span>online
                         </p>
@@ -19,18 +20,18 @@
                 </div>
             </div>
 
-            <div v-if="journey" class="col-md-9">
-                <img :src="journey.image" class="card-img-top" />
+            <div v-if="singleJourney" class="col-md-9">
+                <img :src="singleJourney.image" :alt="singleJourney.title" class="card-img-top" />
                 <div class="card-body">
-                    <h4 class="card-title">{{journey.title}}</h4>
-                    <p class="card-text">{{journey.description}}</p>
+                    <h4 class="card-title">{{singleJourney.title}}</h4>
+                    <p class="card-text">{{singleJourney.description}}</p>
                     <hr />
                     <p class="card-text">
-                        <small>SUBMITTED BY {{ journey.author || 'anonymous'}}, {{ journey.createdAt | customizedFromNow }}</small>
+                        <small>SUBMITTED BY {{ singleJourney.author || 'anonymous'}}, {{ singleJourney.createdAt | customizedFromNow }}</small>
                     </p>
                     <router-link
                         v-if="owner"
-                        :to="{ name: 'EditJourney', params: journey.slug }"
+                        :to="{ name: 'EditJourney', params: singleJourney.slug }"
                         class="btn btn-warning btn-sm"
                     >edit</router-link>
                     <a v-if="owner" @click="deleteJourney" class="btn btn-danger btn-sm">delete</a>
@@ -46,39 +47,39 @@
 import db from "@/firebase/init";
 import firebase from "firebase";
 import AddComments from "@/components/comments/AddComments.vue";
-import { mapGetters } from "vuex";
-// import GMap from "@/components/journeys/GMap.vue";
+import { mapGetters, mapActions } from "vuex";
+import GMap from "@/components/journeys/GMap.vue";
 // import Weather from "@/components/journeys/Weather.vue";
 
 export default {
     name: "ShowJourney",
     components: {
-        AddComments
+        AddComments,
+        GMap,
     },
     data() {
         return {
-            journey: [],
             owner: false,
-            slug: this.$route.params.journey_slug
+            slug: this.$route.params.journey_slug,
         };
     },
     methods: {
+        ...mapActions(["getSingleJourney"]),
         deleteJourney() {
             if (confirm("Are you sure to delete this")) {
-                db.collection("journeys")
-                    .doc(this.journey.id)
-                    .delete();
+                db.collection("journeys").doc(this.singleJourney.id).delete();
                 this.$router.push({ name: "Index" });
             } else {
                 console.log("this is from showpage: thanks for not delete me");
             }
-        }
+        },
     },
     created() {
-        this.journey = this.singleJourney(this.slug);
-        firebase.auth().onAuthStateChanged(user => {
+        this.getSingleJourney(this.slug);
+
+        firebase.auth().onAuthStateChanged((user) => {
             if (user) {
-                if (user.uid == this.journey.author_id) {
+                if (user.uid == this.singleJourney.author_id) {
                     this.owner = true;
                 } else {
                     this.owner = false;
@@ -88,7 +89,7 @@ export default {
             }
         });
     },
-    computed: mapGetters(["journeysList", "singleJourney"])
+    computed: mapGetters(["singleJourney"]),
 };
 </script>
 

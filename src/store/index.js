@@ -6,17 +6,12 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
     state: {
-        journeysList: []
+        journeysList: [],
+        singleJourney: {}
     },
     getters: {
         journeysList: state => state.journeysList,
-        singleJourney: (state) => (nameKey) => {
-            for (let i = 0; i < state.journeysList.length; i++) {
-                if (state.journeysList[i].slug === nameKey) {
-                    return state.journeysList[i];
-                }
-            }
-        },
+        singleJourney: state => state.singleJourney
     },
     actions: {
         //Get data from firebase
@@ -36,10 +31,22 @@ export default new Vuex.Store({
             //commit data to mutation, and then to state
             commit('setJourneys', journeys);
         },
+
+        //Get singleJourney
+        async getSingleJourney({ commit }, nameKey) {
+            let singleJourney;
+            let ref = await db.collection("journeys").where("slug", "==", nameKey);
+            await ref.get().then(snapshot => {
+                snapshot.forEach(doc => {
+                    singleJourney = doc.data();
+                })
+            })
+            console.log(`From action - get singleJourney successfully`)
+            commit('setSingleJourney', singleJourney);
+        }
     },
     mutations: {
-        setJourneys: (state, journeysList) => state.journeysList = journeysList
-    },
-    modules: {
+        setJourneys: (state, journeysList) => state.journeysList = journeysList,
+        setSingleJourney: (state, singleJourney) => state.singleJourney = singleJourney
     }
 })

@@ -24,7 +24,7 @@
                     class="col-lg-3 col-md-6 card-group"
                 >
                     <div id="indexcard" class="card mt-3">
-                        <img :src="journey.image" class="card-img-top" />
+                        <img :src="journey.image" alt="Journey image" class="card-img-top" />
                         <div class="card-body d-flex flex-column">
                             <span class="card-title">{{ journey.title }}</span>
                             <small class="card-text text-muted">{{ journey.description | snippet }}</small>
@@ -49,24 +49,24 @@ export default {
     name: "Journeys",
     data() {
         return {
-            search: ""
+            search: "",
         };
     },
-    methods: mapActions(["getJourneys", "getComments"]),
+    methods: mapActions(["getJourneys"]),
     created() {
         this.getJourneys();
     },
     computed: {
         //be carefull with the quote sign!!!
         ...mapGetters(["journeysList"]),
-        filteredJourneys: function() {
-            return this.journeysList.filter(journey => {
+        filteredJourneys: function () {
+            return this.journeysList.filter((journey) => {
                 return journey.title
                     .toLowerCase()
                     .match(this.search.toLowerCase());
             });
-        }
-    }
+        },
+    },
 };
 </script>
 
@@ -99,5 +99,18 @@ export default {
 .container h1,
 p.lead {
     user-select: none;
+}
+
+@media screen and (max-width: 768px) {
+    div.search input {
+        display: none !important;
+    }
+    .journeys h1.display-4 {
+        font-size: 2em;
+        transition: ease 0.3s;
+    }
+    .journeys p.lead {
+        font-size: 1em;
+    }
 }
 </style>
