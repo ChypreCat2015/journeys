@@ -10,6 +10,7 @@
                 <label for="location">Location</label>
                 <input type="text" class="form-control" name="location" v-model="journey.location" />
             </div>
+
             <div class="form-group">
                 <label for="image">Image URL</label>
                 <input type="text" class="form-control" name="image" v-model="journey.image" />
@@ -36,7 +37,7 @@
 <script>
 import db from "@/firebase/init";
 import slugify from "slugify";
-import { mapGetters } from "vuex";
+import { mapGetters, mapActions } from "vuex";
 
 export default {
     name: "EditJourney",
@@ -44,11 +45,11 @@ export default {
         return {
             journey: null,
             feedback: null,
-            slug: this.$route.params.journey_slug
+            slug: this.$route.params.journey_slug,
         };
     },
-    computed: mapGetters(["singleJourney"]),
     methods: {
+        ...mapActions(["getSingleJourney"]),
         editJourney() {
             if (
                 this.journey.title &&
@@ -61,7 +62,7 @@ export default {
                 this.journey.slug = slugify(this.journey.title, {
                     replacement: "-",
                     remove: /[$*_=~.()'"!\-:@]/g,
-                    lower: true
+                    lower: true,
                 });
                 db.collection("journeys")
                     .doc(this.journey.id)
@@ -70,23 +71,32 @@ export default {
                         location: this.journey.location,
                         image: this.journey.image,
                         description: this.journey.description,
-                        slug: this.journey.slug
+                        slug: this.journey.slug,
                     })
                     .then(() => {
                         this.$router.push({ name: "Index" });
                     })
-                    .catch(err => {
+                    .catch((err) => {
                         console.log(err);
                     });
             } else {
                 this.feedback = "Please fill all the information";
             }
-        }
+        },
+        updateDateToPage(milliSeconds) {
+            const d = new Date(milliSeconds);
+            return d.toLocaleDateString();
+        },
     },
     created() {
-        //getting data from state
-        this.journey = this.singleJourney(this.slug);
-    }
+        this.getSingleJourney(this.slug);
+    },
+    computed: mapGetters(["singleJourney"]),
+    watch: {
+        singleJourney(newVal) {
+            this.journey = newVal;
+        },
+    },
 };
 </script>
 

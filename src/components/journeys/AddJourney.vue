@@ -13,8 +13,13 @@
                         <input type="text" class="form-control" name="location" v-model="location" />
                     </div>
                     <div class="form-group">
-                        <label for="vistedAt">Visted Time</label>
-                        <input type="date" class="form-control" name="vistedAt" v-model="vistedAt" />
+                        <label for="visitedAt">Visted Time</label>
+                        <input
+                            type="date"
+                            class="form-control"
+                            name="visitedAt"
+                            v-model="visitedAt"
+                        />
                     </div>
                     <!-- upload file -->
                     <form class="upload" @submit.prevent="uploadImg">
@@ -62,7 +67,7 @@ export default {
             user: null,
             title: null,
             location: null,
-            vistedAt: null,
+            visitedAt: null,
             image: [],
             description: null,
             createdAt: null,
@@ -73,13 +78,16 @@ export default {
     },
     methods: {
         addJourney() {
+            console.log(this.visitedAt);
             if (
                 this.title &&
                 this.location &&
                 this.image.url &&
                 this.description &&
-                this.vistedAt
+                this.visitedAt
             ) {
+                console.log(this.visitedAt);
+                this.visitedAt = Date.parse(this.visitedAt);
                 this.feedback = null;
                 //create slug
                 this.slug = slugify(this.title, {
@@ -91,13 +99,14 @@ export default {
                     .add({
                         title: this.title,
                         location: this.location,
-                        visitedAt: this.vistedAt,
+                        visitedAt: this.visitedAt,
                         image: this.image.url,
                         description: this.description,
                         createdAt: Date.now(),
                         slug: this.slug,
                         author: this.user.displayName,
                         author_id: this.user.uid,
+                        likes: 0,
                     })
                     .then(() => {
                         this.$router.push({ name: "Index" });

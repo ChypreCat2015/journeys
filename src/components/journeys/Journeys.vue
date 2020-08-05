@@ -42,7 +42,7 @@
                                     :disabled="hasLiked"
                                     class="mdi mdi-heart-outline"
                                 ></span>
-                                <small class="ml-2 text-muted">{{ likeCounter }}</small>
+                                <small class="ml-2 text-muted">{{ journey.likes }}</small>
                             </div>
                         </div>
                     </div>
@@ -60,7 +60,6 @@ export default {
     data() {
         return {
             search: "",
-            likeCounter: 0,
             hasLiked: false,
         };
     },

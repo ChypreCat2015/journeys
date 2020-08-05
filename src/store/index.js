@@ -39,6 +39,7 @@ export default new Vuex.Store({
             await ref.get().then(snapshot => {
                 snapshot.forEach(doc => {
                     singleJourney = doc.data();
+                    singleJourney.id = doc.id;
                 })
             })
             console.log(`From action - get singleJourney successfully`)

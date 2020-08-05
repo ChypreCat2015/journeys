@@ -1,39 +1,37 @@
 <template>
     <div class="showjourney container">
         <div class="row mt-2">
-            <div v-if="singleJourney" class="col-md-3 d-md-block">
-                <h5 class="ml-2">Journey - {{singleJourney.title}}</h5>
+            <div v-if="journey" class="col-md-3 d-md-block">
+                <h5 class="ml-2">Journey - {{journey.title}}</h5>
                 <ul class="list-group">
                     <li class="list-group-item">
                         <strong>Location:</strong>
-                        {{ singleJourney.location }}
+                        {{ journey.location }}
                     </li>
                     <li class="list-group-item">
                         <strong>Visted:</strong>
-                        {{ singleJourney.visitedAt.toMillis() | customizedFromNow }}
+                        {{ journey.visitedAt | customizedFromNow }}
                     </li>
-                    <li class="list-group-item">Morbi leo risus</li>
                 </ul>
 
                 <GMap class="mt-2" />
             </div>
 
-            <div v-if="singleJourney" class="col-md-9">
-                <img :src="singleJourney.image" :alt="singleJourney.title" class="card-img-top" />
+            <div v-if="journey" class="col-md-9">
+                <img :src="journey.image" :alt="journey.title" class="card-img-top" />
                 <div class="card-body">
-                    <h4 class="card-title">{{singleJourney.title}}</h4>
-                    <p class="card-text">{{singleJourney.description}}</p>
+                    <h4 class="card-title">{{journey.title}}</h4>
+                    <p class="card-text">{{journey.description}}</p>
                     <hr />
                     <p class="card-text">
-                        <small>SUBMITTED BY {{ singleJourney.author || 'anonymous'}}, {{ singleJourney.createdAt | customizedFromNow }}</small>
+                        <small>SUBMITTED BY {{ journey.author || 'anonymous'}}, {{ journey.createdAt | customizedFromNow }}</small>
                     </p>
                     <router-link
                         v-if="owner"
-                        :to="{ name: 'EditJourney', params: singleJourney.slug }"
+                        :to="{ name: 'EditJourney', params: {journey_slug:journey.slug }}"
                         class="btn btn-warning btn-sm"
                     >edit</router-link>
                     <a v-if="owner" @click="deleteJourney" class="btn btn-danger btn-sm">delete</a>
-                    <!-- <div class="delete">xx</div> -->
                 </div>
                 <AddComments />
             </div>
@@ -56,6 +54,7 @@ export default {
     },
     data() {
         return {
+            journey: null,
             owner: false,
             slug: this.$route.params.journey_slug,
         };
@@ -63,29 +62,38 @@ export default {
     methods: {
         ...mapActions(["getSingleJourney"]),
         deleteJourney() {
+            console.log(this.journey);
             if (confirm("Are you sure to delete this")) {
-                db.collection("journeys").doc(this.singleJourney.id).delete();
+                db.collection("journeys").doc(this.journey.id).delete();
                 this.$router.push({ name: "Index" });
             } else {
                 console.log("this is from showpage: thanks for not delete me");
             }
         },
-    },
-    created() {
-        this.getSingleJourney(this.slug);
-        firebase.auth().onAuthStateChanged((user) => {
-            if (user) {
-                if (user.uid == this.singleJourney.author_id) {
-                    this.owner = true;
+        checkAuth(journey) {
+            firebase.auth().onAuthStateChanged((user) => {
+                if (user) {
+                    if (user.uid == journey.author_id) {
+                        this.owner = true;
+                    } else {
+                        this.owner = false;
+                    }
                 } else {
                     this.owner = false;
                 }
-            } else {
-                this.owner = false;
-            }
-        });
+            });
+        },
+    },
+    created() {
+        this.getSingleJourney(this.slug);
     },
     computed: mapGetters(["singleJourney"]),
+    watch: {
+        singleJourney(newVal) {
+            this.journey = newVal;
+            this.checkAuth(newVal);
+        },
+    },
 };
 </script>
 
