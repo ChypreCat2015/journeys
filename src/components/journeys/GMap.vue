@@ -1,12 +1,9 @@
 <template>
-    <div class="map">
-        <div class="google-map" id="map"></div>
-    </div>
+    <div id="map"></div>
 </template>
 
 <script>
-// import { EventBus } from "@/eventBus.js";
-// import { mapGetters } from "vuex";
+import { mapGetters } from "vuex";
 
 export default {
     name: "GMap",
@@ -27,7 +24,6 @@ export default {
         },
         geocoderAddress(resultsMap, location) {
             const geocoder = new window.google.maps.Geocoder();
-
             geocoder.geocode({ address: location }, (results, status) => {
                 if (status === "OK") {
                     resultsMap.setCenter(results[0].geometry.location);
@@ -46,20 +42,16 @@ export default {
         },
     },
     computed: {
-        singleJourney() {
-            return this.$store.state.singleJourney;
-        },
+        ...mapGetters(["singleJourney"]),
     },
-    watch: {
-        singleJourney(newVal) {
-            this.geocoderAddress(this.renderMap(), newVal.location);
-        },
+    mounted() {
+        this.geocoderAddress(this.renderMap(), this.singleJourney.location);
     },
 };
 </script>
 
 <style>
-.google-map {
+#map {
     width: 100%;
     height: 400px;
 }

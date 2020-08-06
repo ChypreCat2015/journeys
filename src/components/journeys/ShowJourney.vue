@@ -62,7 +62,6 @@ export default {
     methods: {
         ...mapActions(["getSingleJourney"]),
         deleteJourney() {
-            console.log(this.journey);
             if (confirm("Are you sure to delete this")) {
                 db.collection("journeys").doc(this.journey.id).delete();
                 this.$router.push({ name: "Index" });
