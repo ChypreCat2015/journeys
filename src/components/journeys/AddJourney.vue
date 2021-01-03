@@ -6,11 +6,21 @@
                 <form @submit.prevent="addJourney">
                     <div class="form-group">
                         <label for="title">Journey Title</label>
-                        <input type="text" class="form-control" name="title" v-model="title" />
+                        <input
+                            type="text"
+                            class="form-control"
+                            name="title"
+                            v-model="title"
+                        />
                     </div>
                     <div class="form-group">
                         <label for="location">Location</label>
-                        <input type="text" class="form-control" name="location" v-model="location" />
+                        <input
+                            type="text"
+                            class="form-control"
+                            name="location"
+                            v-model="location"
+                        />
                     </div>
                     <div class="form-group">
                         <label for="visitedAt">Visted Time</label>
@@ -31,8 +41,14 @@
                             @change="filePicked"
                             accept=".jpg, .jpeg, .png"
                         />
-                        <input type="submit" value="Upload" class="btn btn-outline-secondary" />
-                        <small v-if="imageFeedback" class="text-success">{{ imageFeedback }}</small>
+                        <input
+                            type="submit"
+                            value="Upload"
+                            class="btn btn-outline-secondary"
+                        />
+                        <small v-if="imageFeedback" class="text-success">{{
+                            imageFeedback
+                        }}</small>
                     </form>
                     <!-- upload file end-->
                     <div class="form-group">
@@ -47,7 +63,9 @@
                     </div>
                     <div class="form-group">
                         <p v-if="feedback">{{ feedback }}</p>
-                        <button class="btn btn-outline-info btn-block">SUBMIT</button>
+                        <button class="btn btn-outline-info btn-block">
+                            SUBMIT
+                        </button>
                     </div>
                 </form>
             </div>
@@ -95,7 +113,8 @@ export default {
                     remove: /[$*_=~.()'"!\-:@]/g,
                     lower: true,
                 });
-                db.collection("journeys")
+                db.firestore()
+                    .collection("journeys")
                     .add({
                         title: this.title,
                         location: this.location,

@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import db from "@/firebase/init";
+import db from "@/firebase/init"
 
 Vue.use(Vuex)
 
@@ -17,7 +17,7 @@ export default new Vuex.Store({
         //Get data from firebase
         async getJourneys({ commit }) {
             let journeys = [];
-            await db.collection("journeys")
+            await db.firestore().collection("journeys")
                 .orderBy("createdAt", "desc")
                 .get()
                 .then(snapshot => {
@@ -35,7 +35,7 @@ export default new Vuex.Store({
         //Get singleJourney
         async getSingleJourney({ commit }, nameKey) {
             let singleJourney;
-            let ref = await db.collection("journeys").where("slug", "==", nameKey);
+            let ref = await db.firestore().collection("journeys").where("slug", "==", nameKey);
             await ref.get().then(snapshot => {
                 snapshot.forEach(doc => {
                     singleJourney = doc.data();
@@ -48,6 +48,6 @@ export default new Vuex.Store({
     },
     mutations: {
         setJourneys: (state, journeysList) => state.journeysList = journeysList,
-        setSingleJourney: (state, singleJourney) => state.singleJourney = singleJourney
+        setSingleJourney: (state, singleJourney) => state.singleJourney = singleJourney,
     }
 })

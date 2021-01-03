@@ -4,16 +4,31 @@
         <form @submit.prevent="editJourney">
             <div class="form-group">
                 <label for="title">Journey Title</label>
-                <input type="text" class="form-control" name="title" v-model="journey.title" />
+                <input
+                    type="text"
+                    class="form-control"
+                    name="title"
+                    v-model="journey.title"
+                />
             </div>
             <div class="form-group">
                 <label for="location">Location</label>
-                <input type="text" class="form-control" name="location" v-model="journey.location" />
+                <input
+                    type="text"
+                    class="form-control"
+                    name="location"
+                    v-model="journey.location"
+                />
             </div>
 
             <div class="form-group">
                 <label for="image">Image URL</label>
-                <input type="text" class="form-control" name="image" v-model="journey.image" />
+                <input
+                    type="text"
+                    class="form-control"
+                    name="image"
+                    v-model="journey.image"
+                />
             </div>
             <div class="form-group">
                 <label for="description">Description</label>
@@ -64,7 +79,8 @@ export default {
                     remove: /[$*_=~.()'"!\-:@]/g,
                     lower: true,
                 });
-                db.collection("journeys")
+                db.firestore()
+                    .collection("journeys")
                     .doc(this.journey.id)
                     .update({
                         title: this.journey.title,

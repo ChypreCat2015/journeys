@@ -14,7 +14,7 @@
   - User can create new comment after being authenticated
   - User can edit/delete exisiting posts after being authenticated as the owner
   - User can see all her past posts
-- Functions 
+- Features 
   - User can create add, edit, delete posts
   - User can upload photos locally
   - User can create comments

@@ -2,7 +2,7 @@
     <div class="showjourney container">
         <div class="row mt-2">
             <div v-if="journey" class="col-md-3 d-md-block">
-                <h5 class="ml-2">Journey - {{journey.title}}</h5>
+                <h5 class="ml-2">Journey - {{ journey.title }}</h5>
                 <ul class="list-group">
                     <li class="list-group-item">
                         <strong>Location:</strong>
@@ -18,20 +18,36 @@
             </div>
 
             <div v-if="journey" class="col-md-9">
-                <img :src="journey.image" :alt="journey.title" class="card-img-top" />
+                <img
+                    :src="journey.image"
+                    :alt="journey.title"
+                    class="card-img-top"
+                />
                 <div class="card-body">
-                    <h4 class="card-title">{{journey.title}}</h4>
-                    <p class="card-text">{{journey.description}}</p>
+                    <h4 class="card-title">{{ journey.title }}</h4>
+                    <p class="card-text">{{ journey.description }}</p>
                     <hr />
                     <p class="card-text">
-                        <small>SUBMITTED BY {{ journey.author || 'anonymous'}}, {{ journey.createdAt | customizedFromNow }}</small>
+                        <small
+                            >SUBMITTED BY {{ journey.author || "anonymous" }},
+                            {{ journey.createdAt | customizedFromNow }}</small
+                        >
                     </p>
                     <router-link
                         v-if="owner"
-                        :to="{ name: 'EditJourney', params: {journey_slug:journey.slug }}"
+                        :to="{
+                            name: 'EditJourney',
+                            params: { journey_slug: journey.slug },
+                        }"
                         class="btn btn-warning btn-sm"
-                    >edit</router-link>
-                    <a v-if="owner" @click="deleteJourney" class="btn btn-danger btn-sm">delete</a>
+                        >edit</router-link
+                    >
+                    <a
+                        v-if="owner"
+                        @click="deleteJourney"
+                        class="btn btn-danger btn-sm"
+                        >delete</a
+                    >
                 </div>
                 <AddComments />
             </div>
@@ -63,7 +79,10 @@ export default {
         ...mapActions(["getSingleJourney"]),
         deleteJourney() {
             if (confirm("Are you sure to delete this")) {
-                db.collection("journeys").doc(this.journey.id).delete();
+                db.firestore()
+                    .collection("journeys")
+                    .doc(this.journey.id)
+                    .delete();
                 this.$router.push({ name: "Index" });
             } else {
                 console.log("this is from showpage: thanks for not delete me");
